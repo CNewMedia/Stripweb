@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welke vader is jouw vader? — Stripweb Vaderdagquiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap');
+
+  :root {
+    --paper: #f5ecd9;
+    --ink: #1a1a1a;
+    --red: #e63946;
+    --yellow: #ffb700;
+    --paper-dark: #e8dcc0;
+    --shadow: rgba(26,26,26,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Fraunces', Georgia, serif;
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(var(--paper-dark) 1.1px, transparent 1.1px);
+    background-size: 14px 14px;
+    color: var(--ink);
+    line-height: 1.55;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  header { text-align: center; margin: 12px 0 28px; }
+  .kicker {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    font-size: 15px;
+    padding: 4px 14px;
+    transform: rotate(-1.5deg);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    font-size: clamp(38px, 9vw, 64px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    color: var(--ink);
+  }
+  h1 .red { color: var(--red); }
+  .sub {
+    font-size: 16px;
+    font-style: italic;
+    color: #5c5345;
+    margin-top: 10px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+    padding: 28px 24px 32px;
+    position: relative;
+  }
+  .halftone-corner {
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 90px; height: 90px;
+    background-image: radial-gradient(var(--red) 2.4px, transparent 2.6px);
+    background-size: 11px 11px;
+    opacity: 0.55;
+    pointer-events: none;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+  }
+
+  /* Progress */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 10px;
+    background: var(--paper-dark);
+    border: 2px solid var(--ink);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--red);
+    width: 0%;
+    transition: width 0.4s cubic-bezier(.6,.2,.1,1);
+  }
+  .progress-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  /* Question */
+  .q-emoji { font-size: 40px; line-height: 1; margin-bottom: 8px; }
+  .question {
+    font-size: clamp(22px, 5vw, 28px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 22px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .option {
+    text-align: left;
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    background: var(--paper);
+    border: 2.5px solid var(--ink);
+    padding: 15px 18px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    box-shadow: 3px 3px 0 var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .option:hover {
+    transform: translate(-2px,-2px);
+    box-shadow: 5px 5px 0 var(--ink);
+    background: #fff8ea;
+  }
+  .option:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+  .option .opt-emoji { font-size: 24px; flex-shrink: 0; }
+
+  /* Intro / result buttons */
+  .btn {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1.5px;
+    font-size: 22px;
+    background: var(--red);
+    color: var(--paper);
+    border: 3px solid var(--ink);
+    padding: 13px 30px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 var(--ink);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+  }
+  .btn:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
+  .btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+  .btn.secondary { background: var(--paper); color: var(--ink); }
+  .btn.yellow { background: var(--yellow); color: var(--ink); }
+
+  .intro-text { font-size: 17px; margin-bottom: 10px; }
+  .intro-text + .intro-text { margin-bottom: 22px; }
+  .center { text-align: center; }
+
+  /* Result */
+  .result-profile-emoji { font-size: 64px; text-align: center; line-height: 1; margin-bottom: 6px; }
+  .result-kicker {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    color: var(--red);
+    font-size: 18px;
+  }
+  .result-name {
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(34px, 8vw, 52px);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .result-desc { font-size: 17px; margin-bottom: 20px; }
+  .result-genre {
+    background: var(--paper-dark);
+    border-left: 5px solid var(--yellow);
+    padding: 12px 16px;
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+  .picks-title {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+    font-size: 22px;
+    margin-bottom: 14px;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 4px;
+  }
+  .pick {
+    display: block;
+    border: 2.5px solid var(--ink);
+    padding: 13px 16px;
+    margin-bottom: 11px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    box-shadow: 3px 3px 0 var(--shadow);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  }
+  .pick:hover {
+    transform: translate(-2px,-2px);
+    box-shadow: 5px 5px 0 var(--ink);
+    background: #fff8ea;
+  }
+  .pick-title { font-weight: 700; font-size: 17px; }
+  .pick-title .arrow { color: var(--red); }
+  .pick-author { font-size: 14px; color: #5c5345; font-style: italic; }
+  .pick-note { font-size: 15px; margin-top: 4px; }
+
+  .result-cta {
+    margin-top: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .restart {
+    background: none;
+    border: none;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: #5c5345;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 4px;
+  }
+
+  footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 13px;
+    color: #7a7060;
+  }
+  footer a { color: var(--red); text-decoration: none; font-weight: 600; }
+
+  .fade-in { animation: fadeIn 0.45s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="kicker">Stripweb · Vaderdag 2026</span>
+    <h1>Welke vader is <span class="red">jouw</span> vader?</h1>
+    <p class="sub">5 vragen · 60 seconden · de perfecte strip als uitkomst</p>
+  </header>
+
+  <div class="card" id="card">
+    <div class="halftone-corner"></div>
+    <div id="content"></div>
+  </div>
+
+  <footer>
+    Quiz door Stripweb · <a href="https://www.stripweb.be/nl-nl" target="_blank" rel="noopener">stripweb.be</a> · Vaderdag valt op zondag 14 juni 2026
+  </footer>
+</div>
+
+<script>
+// ---- CONFIG ----
+// Pas deze UTM-link aan naar de definitieve gids-URL met tracking.
+const GUIDE_URL = "https://nieuws.stripweb.be/nl/strips-voor-vaderdag-per-type-vadercadeaugids-per-type-vader?utm_source=quiz&utm_medium=social&utm_campaign=vaderdag2026";
+const GIFTCARD_URL = "https://www.stripweb.be/nl-nl/cadeaubonnen/cadeaubon?utm_source=quiz&utm_medium=social&utm_campaign=vaderdag2026";
+
+// ---- 15 PROFIELEN ----
+const profiles = {
+  avonturier: {
+    emoji: "⛺", name: "De Avonturier",
+    desc: "Voor hem is een strip een ticket naar elders. Hij wil de bladzijden willen omdraaien, niet erop kauwen — beweging, exotische locaties en helden die hun comfortzone ver achter zich laten.",
+    genre: "Avontuurstrips en actiereeksen",
+    picks: [
+      { t: "Largo Winch", a: "Van Hamme & Francq", n: "Belgische topreeks over een onbedoelde miljardair. Begin bij deel 1: Het Erfgenaam.", u: "https://www.stripweb.be/nl-nl/largo-winch/zoeken?text=&13=49435&all=1" },
+      { t: "Avontuur zonder Helden — 20 jaar later", a: "Dany & Van Hamme", n: "Afgerond verhaal (one shot): gewone mensen die na een vliegtuigcrash in de jungle moeten overleven.", u: "https://www.stripweb.be/nl-nl/avontuur-zonder-helden-20-jaar-later" },
+      { t: "Thorgal", a: "Van Hamme & Rosinski", n: "Episch avontuur tussen Vikingen, mythologie en sciencefiction.", u: "https://www.stripweb.be/nl-nl/thorgal/zoeken?text=&13=48459&all=1" }
+    ]
+  },
+  speurneus: {
+    emoji: "🔍", name: "De Speurneus",
+    desc: "Hij heeft elke aflevering van Mindhunter en True Detective gezien en roept tijdens films wie de moordenaar is — meestal correct. Dichte plots en sterke sfeertekening.",
+    genre: "Detective- en noirstrips",
+    picks: [
+      { t: "Blacksad", a: "Canales & Guarnido", n: "Noir-detective met antropomorfe dieren in jaren '50 Amerika. Het aquareltekenwerk alleen al is de prijs waard.", u: "https://www.stripweb.be/nl-nl/blacksad/zoeken?text=&13=49441&all=1" },
+      { t: "XIII", a: "Van Hamme & Vance", n: "Man zonder geheugen ontrafelt een wereldwijde samenzwering. Pure pageturner.", u: "https://www.stripweb.be/nl-nl/xiii/zoeken?text=&13=48635&all=1" },
+      { t: "In naam van de Zoon", a: "Djian & Corbet", n: "Meeslepende thriller (one shot) over vaderschap, schuld en tweede kansen.", u: "https://www.stripweb.be/nl-nl/in-naam-van-de-zoon-5" }
+    ]
+  },
+  klassieker: {
+    emoji: "📕", name: "De Klassieker",
+    desc: "Hij citeert Kuifje en heeft een mening over Lucky Luke ná Morris. Het medium hoef je hem niet te verkopen — verras hem met een luxe-editie of een album dat hij miste.",
+    genre: "Klassieke Franco-Belgische strips",
+    picks: [
+      { t: "Kuifje — integrale editie", a: "Hergé", n: "Drie albums in één hardcover, voor de fan met ruimte op de pronkplank.", u: "https://www.stripweb.be/nl-nl/kuifje---integraal/zoeken?text=&13=172383&all=1" },
+      { t: "Blake en Mortimer", a: "E.P. Jacobs e.a.", n: "Klassieke avonturenreeks rond professor Mortimer en kapitein Blake tegen aartsvijand Olrik.", u: "https://www.stripweb.be/nl-nl/blake--mortimer/zoeken?text=&13=61976&all=1" },
+      { t: "Robbedoes en Kwabbernoot door…", a: "diverse tekenaars", n: "Hommagereeks waarin telkens een nieuwe tekenaar een eenmalig album maakt.", u: "https://www.stripweb.be/nl-nl/robbedoes-door-/strips-3?13=65258" }
+    ]
+  },
+  intellectueel: {
+    emoji: "🤓", name: "De Intellectueel",
+    desc: "Abonnement op De Standaard én De Tijd, leest essays op vakantie. Voor hem is een graphic novel geen luchtig alternatief voor een roman — het is een eigenstandige literaire vorm.",
+    genre: "Literaire graphic novels en non-fictie strip",
+    picks: [
+      { t: "Maus", a: "Art Spiegelman", n: "Pulitzerprijs-winnende graphic novel over het Holocaust-verhaal van de vader van de auteur.", u: "https://www.stripweb.be/nl-nl/maus-de-volledige-editie" },
+      { t: "De Arabier van de Toekomst", a: "Riad Sattouf", n: "Autobiografische reeks over opgroeien tussen Frankrijk, Libië en Syrië. Scherp én vaak grappig.", u: "https://www.stripweb.be/nl-nl/de-arabier-van-de-toekomst/zoeken?text=&13=66965&all=1" },
+      { t: "De Kleur van de dingen", a: "", n: "Prijswinnend en eigenzinnig: personages als cirkels, alles van bovenaf, met filosofische ondertonen.", u: "https://www.stripweb.be/nl-nl/filosofie/strips-3/de-kleur-van-dingen" }
+    ]
+  },
+  sportieveling: {
+    emoji: "🚴", name: "De Sportieveling",
+    desc: "Abonnee van Sporza, kent de Tour-route van 1998 nog uit het hoofd. Sportverhaal plus menselijk drama — precies wat een sportliefhebber zoekt.",
+    genre: "Sportstrips en sportbiografieën",
+    picks: [
+      { t: "Jesse Owens", a: "Smudja", n: "Van kind in Alabama tot viervoudig olympisch kampioen in Berlijn 1936.", u: "https://www.stripweb.be/nl-nl/jesse-owens/zoeken?text=&all=1" },
+      { t: "Michel Vaillant — seizoen 2", a: "Graton e.a.", n: "De terugkeer van dé sterpiloot, nu met de uitdagingen van de moderne auto-industrie.", u: "https://www.stripweb.be/nl-nl/michel-vaillant---seizoen-2/zoeken?text=&13=66386&all=1" },
+      { t: "Team Rafale", a: "", n: "Moderne avonturenreeks in de wereld van de gevechtsluchtvaart, met fotokatern per deel.", u: "https://www.stripweb.be/nl-nl/team-rafale/zoeken?text=&13=50474&all=1" }
+    ]
+  },
+  humorist: {
+    emoji: "😂", name: "De Humorist",
+    desc: "Lacht hard, doet flauwe woordspelingen aan tafel, kijkt graag naar Urbanus of F.C. De Kampioenen. Humorstrips zijn drempelloos — open een willekeurige pagina en het werkt.",
+    genre: "Humorstrips en gagstrips",
+    picks: [
+      { t: "F.C. De Kampioenen", a: "Hec Leemans", n: "Vlaams cultureel erfgoed in stripvorm. Een nieuw album of verzameleditie scoort altijd.", u: "https://www.stripweb.be/nl-nl/fc-de-kampioenen/strips-3?13=49339" },
+      { t: "Guust Flater", a: "Franquin", n: "De ongeëvenaarde grootmeester van de gag. Best-of-bundels vol tijdloze humor.", u: "https://www.stripweb.be/nl-nl/guust-flater-best-of/zoeken?text=&13=65895&all=1" },
+      { t: "Cowboy Henk", a: "Kamagurka & Herr Seele", n: "Absurdistische volwassen humor met cultstatus. Niet voor wie alles letterlijk neemt.", u: "https://www.stripweb.be/nl-nl/cowboy-henk/zoeken?text=&13=49122&all=1" }
+    ]
+  },
+  dromer: {
+    emoji: "🚀", name: "De Dromer",
+    desc: "Star Wars op repeat, Lord of the Rings in de kast. Hij waardeert werelden die op niets anders lijken, met een visuele ambitie die uniek is voor het medium.",
+    genre: "Sciencefiction- en fantasystrips",
+    picks: [
+      { t: "De Incal", a: "Jodorowsky & Moebius", n: "Een van de invloedrijkste SF-graphic-novels ooit. Visueel duizelingwekkend.", u: "https://www.stripweb.be/nl-nl/de-avonturen-van-john-difool-1" },
+      { t: "Elfen", a: "diverse auteurs", n: "Toegankelijke fantasy-reeks met bijhorende spin-offs in de Werelden van Arran.", u: "https://www.stripweb.be/nl-nl/elfen/zoeken?text=&13=50307&all=1" },
+      { t: "Ekhö, De spiegelwereld", a: "Arleston & Barbucci", n: "Paralleluniversum waar magie, steampunk en fantasy samenkomen.", u: "https://www.stripweb.be/nl-nl/ekho---de-spiegelwereld/zoeken?text=&13=50455&all=1" }
+    ]
+  },
+  geschiedenisfan: {
+    emoji: "🏛", name: "De Geschiedenisfan",
+    desc: "Kijkt Histories, leest WO I-boeken, gaat op vakantie naar slagvelden. Een goede historische strip levert wat een geschiedenisboek niet kan: visuele reconstructie.",
+    genre: "Historische strips en graphic novels",
+    picks: [
+      { t: "Murena", a: "Dufaux & Delaby", n: "Politiek-historische thriller in het oude Rome onder keizer Nero.", u: "https://www.stripweb.be/nl-nl/murena/zoeken?text=&13=47475&all=1" },
+      { t: "Het Epos van de Vrijmetselarij", a: "", n: "Complete verhalen met extra-dossier over de geheimen van de vrijmetselarij.", u: "https://www.stripweb.be/nl-nl/het-epos-van-de-vrijmetselaars/zoeken?text=&13=62184&all=1" },
+      { t: "Zij Schreven Geschiedenis", a: "divers", n: "Diverse portretten van historische figuren in stripvorm.", u: "https://www.stripweb.be/nl-nl/zij-schreven-geschiedenis/strips-3?13=50451" }
+    ]
+  },
+  romanticus: {
+    emoji: "❤️", name: "De Romanticus",
+    desc: "Sneller geëmotioneerd dan hij toegeeft, kijkt graag feelgoodfilms, stuurt nog kaartjes met de hand. Menselijke verhalen zonder bombast — precies wat hem raakt.",
+    genre: "Romantische en slice-of-life graphic novels",
+    picks: [
+      { t: "Iemand om mee te praten", a: "Pannacione", n: "Pakkend drama met een unieke vertelvondst over een man die zijn leven weer op de rails krijgt.", u: "https://www.stripweb.be/nl-nl/iemand-om-mee-te-praten" },
+      { t: "Een Oceaan vol Liefde", a: "Lupano & Panaccione", n: "Sprankelend, woordeloos en humoristisch verhaal dat tot rust komt aan het eind.", u: "https://www.stripweb.be/nl-nl/een-oceaan-vol-liefde" },
+      { t: "Ballade voor Sophie", a: "Melo & Cavia", n: "Grafische roman over roem, jaloezie en de prijs van talent.", u: "https://www.stripweb.be/nl-nl/roman/strips-3/ballade-voor-sophie" }
+    ]
+  },
+  foodie: {
+    emoji: "🍷", name: "De Foodie",
+    desc: "Kookt het zondagsmaal, kent zijn slager bij voornaam. Eten en strip zijn een verbluffend goed huwelijk: receptuur met verhaal, vakmanschap met cultuur.",
+    genre: "Culinaire en wijngerelateerde graphic novels",
+    picks: [
+      { t: "Châteaux Bordeaux", a: "Corbeyran & Espé", n: "Verslavende saga rond een Bordeauxs wijnhuis. Succession met een glas in de hand.", u: "https://www.stripweb.be/nl-nl/chateaux-bordeaux/zoeken?text=&13=50828&all=1" },
+      { t: "De Onwetenden", a: "Étienne Davodeau", n: "Stripauteur en biowijnboer wisselen één jaar van leven. Charmant en zonder pretentie.", u: "https://www.stripweb.be/nl-nl/de-onwetenden-2" },
+      { t: "Ulysse & Cyrano", a: "Dorison & Servain", n: "Meeslepend verhaal over de liefde voor gastronomie — met lekkere recepten als bonus.", u: "https://www.stripweb.be/nl-nl/ulysses--cyrano" }
+    ]
+  },
+  ontdekker: {
+    emoji: "🧭", name: "De Ontdekker",
+    desc: "Hij keek die Koreaanse serie al toen niemand er nog van had gehoord. Houdt van het ongebaande — uit pure nieuwsgierigheid. Hier vindt de strip zichzelf opnieuw uit.",
+    genre: "Experimentele en indie graphic novels",
+    picks: [
+      { t: "Panter", a: "Brecht Evens", n: "Belgisch internationaal succes: bedrieglijk kinderlijk in waterverf, met diepte die nazindert.", u: "https://www.stripweb.be/nl-nl/panter-5" },
+      { t: "In de schaduw van de helden", a: "David Sala", n: "Visueel adembenemend en ontroerend: twee mannen, elk met hun eigen oorlog.", u: "https://www.stripweb.be/nl-nl/in-de-schaduw-van-de-helden" },
+      { t: "De Meteoren", a: "Redolfi & Deveny", n: "Poëtische graphic novel over het alledaagse, minimalistisch en sfeervol.", u: "https://www.stripweb.be/nl-nl/de-meteoren" }
+    ]
+  },
+  muziekfanaat: {
+    emoji: "🎸", name: "De Muziekfanaat",
+    desc: "Zijn vinylcollectie heeft een eigen kast en hij leest liner notes zoals anderen romans lezen. De muziekbiografie in stripvorm vangt het ritme van een leven.",
+    genre: "Muziek-graphic-novels en muzikantenbiografieën",
+    picks: [
+      { t: "Bowie — Stardust, Rayguns & Moonage Daydreams", a: "Allred & Horton", n: "Schitterende graphic biografie over de Ziggy Stardust-periode. Pop-art tekenwerk.", u: "https://www.stripweb.be/nl-nl/bowie-1" },
+      { t: "Johnny Cash — I See a Darkness", a: "Reinhard Kleist", n: "Sobere, krachtige zwart-wit biografie over de Man in Black. Bekroond.", u: "https://www.stripweb.be/nl-nl/cash---i-see-a-darkness/strips-3/cash-i-see-a-darkness-2" },
+      { t: "Nick Cave — Mercy on Me", a: "Reinhard Kleist", n: "Daverende graphic novel over muziek, liefde, waanzin en punk.", u: "https://www.stripweb.be/nl-nl/nick-cave-mercy-on-me-3" }
+    ]
+  },
+  opengeest: {
+    emoji: "🌿", name: "De Open Geest",
+    desc: "Vraag je wat hij wil, dan zegt hij 'kies jij maar'. Geen sterke voorkeuren — en net daarom verdient hij extra zorg. Trakteer hem op iets dat door iedereen geprezen wordt.",
+    genre: "Brede crowd-pleasers en bekroonde bestsellers",
+    picks: [
+      { t: "Saint-Elme", a: "Lehman & Peeters", n: "Detective in een bergdorp waar iedereen zegt: 'het is hier speciaal'.", u: "https://www.stripweb.be/nl-nl/saint-elme/strips-3?13=62480" },
+      { t: "De zaak David Zimmerman", a: "Lucas Harari", n: "Psychologische thriller met sterk filmisch narratief.", u: "https://www.stripweb.be/nl-nl/de-zaak-david-zimmerman-1" },
+      { t: "Een cadeaubon", a: "", n: "Voor de échte 'ik vind alles goed'-vader misschien wel het meest persoonlijke: een uitstapje naar de stripwinkel.", u: GIFTCARD_URL, giftcard: true }
+    ]
+  },
+  cowboy: {
+    emoji: "🤠", name: "De Cowboy",
+    desc: "Kijkt nog altijd Sergio Leone op een regenachtige zondag en heeft een zwak voor verhalen waarin een man met weinig woorden veel duidelijk maakt. De western is een Franco-Belgische troef.",
+    genre: "Westerns en frontier-strips",
+    picks: [
+      { t: "Undertaker", a: "Dorison & Meyer", n: "Hedendaagse western over een lijkbezorger in Colorado. Voor wie Deadwood een goede avond vond.", u: "https://www.stripweb.be/nl-nl/undertaker/zoeken?text=&13=50653&all=1" },
+      { t: "West Legends", a: "divers o.l.v. Istin", n: "Conceptreeks over vijf grote westernfiguren, elk door andere auteurs.", u: "https://www.stripweb.be/nl-nl/west-legends/zoeken?text=&13=55987&all=1" },
+      { t: "Wyoming 1863", a: "Di Giorgio & Des Dorides", n: "Eén drama en drie lotsbestemmingen op de ruige vlaktes van Wyoming en Montana.", u: "https://www.stripweb.be/nl-nl/wyoming-1863/zoeken?text=&13=151138&all=1" }
+    ]
+  },
+  sensuele: {
+    emoji: "🌹", name: "De Sensuele Lezer",
+    desc: "Hij waardeert kunst zonder taboe en kan een gesprek over erotische kunst voeren zonder geneerd te lachen. Volwassen, geletterd: voor wie kunst en eros niet als tegenpolen ziet.",
+    genre: "Erotische en sensuele graphic novels",
+    picks: [
+      { t: "Druuna", a: "Serpieri", n: "De wulpse Druuna baant zich een weg door een donkere, postapocalyptische wereld.", u: "https://www.stripweb.be/nl-nl/druuna/zoeken?text=&13=50416&all=1" },
+      { t: "Thracië", a: "Trif & Celestini", n: "Romeins drama waarin een verloren jeugdliefde terugkeert in de arena van het Colosseum.", u: "https://www.stripweb.be/nl-nl/thracie/zoeken?text=&13=70055&all=1" },
+      { t: "Toch Interesse", a: "Dany", n: "Integrale van 496 pagina's met het beste werk van Dany, waaronder Rooie Oortjes.", u: "https://www.stripweb.be/nl-nl/erotiek/strips-3/rooie-oortjes---verzamelbox-2" }
+    ]
+  }
+};
+
+// ---- 5 VRAGEN met puntentoekenning per profiel ----
+const questions = [
+  {
+    emoji: "🌅",
+    q: "Wat doet papa het liefst op een vrije zondag?",
+    options: [
+      { label: "Eropuit — fietsen, wandelen, ergens naartoe", e: "🥾", scores: { avonturier: 3, sportieveling: 2, ontdekker: 1 } },
+      { label: "Kokkerellen, een goed glas, lekker tafelen", e: "🍷", scores: { foodie: 3, romanticus: 1 } },
+      { label: "Een film of serie, en erover meepraten", e: "🎬", scores: { speurneus: 2, cowboy: 2, dromer: 1 } },
+      { label: "Lezen, muziek, of gewoon rustig iets ontdekken", e: "🎧", scores: { muziekfanaat: 2, intellectueel: 2, ontdekker: 1 } }
+    ]
+  },
+  {
+    emoji: "📺",
+    q: "Welk programma of welke film past het best bij hem?",
+    options: [
+      { label: "True Detective, Mindhunter — een goede whodunit", e: "🔍", scores: { speurneus: 3, opengeest: 1 } },
+      { label: "Een western of een historisch epos", e: "🏜️", scores: { cowboy: 3, geschiedenisfan: 2 } },
+      { label: "Star Wars, Dune, Lord of the Rings", e: "🚀", scores: { dromer: 3 } },
+      { label: "Iets met humor — Urbanus, De Kampioenen", e: "😂", scores: { humorist: 3 } }
+    ]
+  },
+  {
+    emoji: "📰",
+    q: "Wat ligt er op zijn nachtkastje of in zijn boekenkast?",
+    options: [
+      { label: "Een dik essay, de krant van A tot Z", e: "🤓", scores: { intellectueel: 3, geschiedenisfan: 1 } },
+      { label: "Klassiekers — Kuifje, Lucky Luke, hij kent ze al", e: "📕", scores: { klassieker: 3 } },
+      { label: "Iets over muziek, een platenhoes, biografieën", e: "🎸", scores: { muziekfanaat: 3 } },
+      { label: "Een feelgood-verhaal dat hem stiekem ontroert", e: "❤️", scores: { romanticus: 3, opengeest: 1 } }
+    ]
+  },
+  {
+    emoji: "🎁",
+    q: "Wat zou hij zeggen als je hem een cadeau geeft?",
+    options: [
+      { label: "'Spannend! Wat zit erin?' — hij houdt van avontuur", e: "⛺", scores: { avonturier: 3, dromer: 1 } },
+      { label: "'Ah, een echte aanrader?' — hij wil het beste", e: "🏆", scores: { opengeest: 2, intellectueel: 1, klassieker: 1 } },
+      { label: "'Kies jij maar, ik vind alles goed'", e: "🌿", scores: { opengeest: 3 } },
+      { label: "'Iets bijzonders dat ik nog niet ken' — verrassen mag", e: "🧭", scores: { ontdekker: 3, sensuele: 2 } }
+    ]
+  },
+  {
+    emoji: "💬",
+    q: "Hoe zou je papa het best omschrijven?",
+    options: [
+      { label: "Sportief en altijd in beweging", e: "🚴", scores: { sportieveling: 3, avonturier: 1 } },
+      { label: "Een levensgenieter met smaak", e: "🍷", scores: { foodie: 2, sensuele: 1 } },
+      { label: "Een denker met brede interesses", e: "🏛", scores: { geschiedenisfan: 2, intellectueel: 2 } },
+      { label: "Volwassen en ruimdenkend — houdt van kunst zonder taboe", e: "🌹", scores: { sensuele: 4, ontdekker: 1 } }
+    ]
+  }
+];
+
+// ---- STATE ----
+let current = 0;
+let scores = {};
+Object.keys(profiles).forEach(k => scores[k] = 0);
+
+const content = document.getElementById('content');
+
+function renderIntro() {
+  content.innerHTML = `
+    <div class="fade-in center">
+      <div class="q-emoji">📚</div>
+      <p class="intro-text">Vaderdag valt op <strong>zondag 14 juni</strong>. Maar welke strip past nu écht bij jouw vader?</p>
+      <p class="intro-text">Beantwoord 5 korte vragen en ontdek zijn vaderprofiel — met concrete stripsuggesties uit het Stripweb-assortiment.</p>
+      <button class="btn" id="startBtn">Start de quiz →</button>
+    </div>`;
+  document.getElementById('startBtn').onclick = () => { current = 0; renderQuestion(); };
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const pct = (current / questions.length) * 100;
+  content.innerHTML = `
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <span class="progress-label">${current + 1}/${questions.length}</span>
+    </div>
+    <div class="fade-in">
+      <div class="q-emoji">${q.emoji}</div>
+      <div class="question">${q.q}</div>
+      <div class="options">
+        ${q.options.map((opt, i) => `
+          <button class="option" data-i="${i}">
+            <span class="opt-emoji">${opt.e}</span>
+            <span>${opt.label}</span>
+          </button>`).join('')}
+      </div>
+    </div>`;
+  // animate progress fill after paint
+  requestAnimationFrame(() => {
+    const fill = content.querySelector('.progress-fill');
+    if (fill) fill.style.width = ((current) / questions.length * 100) + '%';
+  });
+  content.querySelectorAll('.option').forEach(btn => {
+    btn.onclick = () => {
+      const opt = q.options[btn.dataset.i];
+      for (const [k, v] of Object.entries(opt.scores)) scores[k] += v;
+      current++;
+      if (current < questions.length) renderQuestion();
+      else renderResult();
+    };
+  });
+}
+
+function topProfile() {
+  let best = null, bestScore = -1;
+  // Stable order = declaration order of profiles object
+  for (const key of Object.keys(profiles)) {
+    if (scores[key] > bestScore) { bestScore = scores[key]; best = key; }
+  }
+  return best;
+}
+
+function renderResult() {
+  const key = topProfile();
+  const p = profiles[key];
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+        <span class="progress-label">Klaar!</span>
+      </div>
+      <div class="result-profile-emoji">${p.emoji}</div>
+      <p class="result-kicker">Jouw vader is…</p>
+      <h2 class="result-name">${p.name}</h2>
+      <p class="result-desc">${p.desc}</p>
+      <div class="result-genre"><strong>Wat hem raakt:</strong> ${p.genre}.</div>
+      <div class="picks-title">Onze topkeuzes voor hem</div>
+      ${p.picks.map(pick => `
+        <a class="pick" href="${pick.u}" target="_blank" rel="noopener">
+          <div class="pick-title"><span class="arrow">→</span> ${pick.t}${pick.a ? ` <span class="pick-author">(${pick.a})</span>` : ''}</div>
+          <div class="pick-note">${pick.n}</div>
+        </a>`).join('')}
+      <div class="result-cta">
+        <a class="btn yellow" href="${GUIDE_URL}" target="_blank" rel="noopener">Lees de volledige gids — alle 15 vaders</a>
+        <a class="btn secondary" href="${GIFTCARD_URL}" target="_blank" rel="noopener">Toch twijfel? Bekijk de cadeaubon</a>
+        <button class="restart" id="restartBtn">↺ Opnieuw doen voor een andere vader</button>
+      </div>
+    </div>`;
+  document.getElementById('restartBtn').onclick = () => {
+    current = 0;
+    Object.keys(profiles).forEach(k => scores[k] = 0);
+    renderIntro();
+  };
+}
+
+renderIntro();
+</script>
+</body>
+</html>
